@@ -1,0 +1,73 @@
+/*
+ * @desc custom manufacturers collection
+*/
+
+.custom-collection-list{
+  display:flex;
+  display:-webkit-flex;
+  flex-wrap:wrap;
+  @media screen and (max-width:768px){
+    justify-content:space-around;
+    -webkit-justify-content:space-around;
+    .custom-collection-item{
+      width:46% !important;
+      margin-right:0 !important;
+    }
+  }
+  .custom-collection-item{
+    transition:0.2s;
+    width:23%;
+    margin-right:2%;
+    cursor:pointer;
+    &.active-filter{
+      opacity:0;
+      visibility:hidden;
+      position:absolute;
+      left:0;
+      z-index:-999;
+    }
+    &:hover{
+      transform:translateY(-2px);
+      .content{
+              box-shadow:1px 4px 16px #b2b2b2;
+      }
+      .title{
+        color:black !important;
+      }
+    }
+    .content{
+      box-shadow:1px 4px 16px #dbdbdb;
+      transition:0.2s;
+      border-radius:4px;
+      overflow:hidden;
+      background-color:white;
+      padding:1em;
+      margin-bottom:1em;
+      .media-wrapper{
+        .image{
+          background-size:contain;
+          background-repeat:no-repeat;
+          background-position:center center;
+          min-height:120px;
+        }
+      }
+      .meta{
+        .title{
+          text-align:center;
+          font-weight:400;
+          font-size:0.8em;
+          color:#b5b5b5;
+          transition:color 0.4s;
+        }
+        .category-list{
+          display:none;
+          padding:1em;
+          text-align:center;
+          .category-item{
+            font-size:0.85em;
+          }
+        }
+      }
+    }
+  }
+}
