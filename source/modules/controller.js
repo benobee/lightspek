@@ -10,11 +10,32 @@ const controller = {
 
 			this.loader();
 			this.indexArray();
-			this.getListData();
-
-			console.log(this);			
+			this.sortArray();
+			this.getListData();		
 		}
 	},
+    sortByName(array) {
+
+        /* 
+         * @desc sort array by name
+        */
+        
+        array.sort((firstItem, nextItem) => {
+			const firstItemName = this.slugify( $(firstItem).data('title') );
+
+			const nextItemName = this.slugify( $(nextItem).data('title') );
+
+            if (firstItemName < nextItemName ) {
+				return -1;
+            }
+
+			if ( firstItemName > nextItemName ) {
+				return 1;
+			} 
+            return 0;
+        });
+        return array;
+    },
 	loader() {
 		const loaderWrapper = document.createElement('div');
 
@@ -31,10 +52,23 @@ const controller = {
 	indexArray() {
 
 		/*
-		 * @desc cache array to match for data indexing
+		 * @desc cache array to match for data indexing and sort by name
 		*/
 	
 		this.array = $('.custom-collection-item').toArray();
+
+	},
+	sortArray() {
+
+		const array = this.sortByName(this.array);
+
+		const target = $('#manufacturers-collection');
+
+		$(target).html('');
+
+		$.each(array, (i, item) => {
+			$(target).append(item);
+		});
 	},
     slugify(filterName) {
 
@@ -99,15 +133,29 @@ const controller = {
 		*/
 	
 		$.ajax({
-			url: "https://lightspek.squarespace.com/manufacturers-collection?format=json",
+			url: "https://lightspek.squarespace.com/manufacturers-collection?format=json&nocache=true",
 			dataType: "jsonp",
 			success: (result) => {
+
 				this.data = result;
 				this.injectFilters(result);
 				this.events();
 
 				$('.loader-wrapper').removeClass('spinning');
 				$('#page').addClass('loaded');
+			},
+			error: (error) => {
+				console.log(error);
+			}
+		});
+	},
+	getItemData(itemUrl) {
+
+		return $.ajax({
+			url: "https://lightspek.squarespace.com/manufacturers-collection/" + itemUrl + "?format=json&nocache=true",
+			dataType: "jsonp",
+			success: (result) => {
+				return result;
 			},
 			error: (error) => {
 				console.log(error);
@@ -144,18 +192,21 @@ const controller = {
 
 		//modal
 		$('.custom-collection-item').on("click", (e) => {
-			const index = $(e.currentTarget).data("index");
+			modal.loading();
 
-			const data = this.data.items[ index - 1 ];
+			const url = $(e.currentTarget).data('url');
 
-			const gallery = data.promotedBlock;
+			const gallery = this.getItemData(url);
 
-			modal.injectMeta(data);
-			modal.injectGallery(gallery);
-			modal.open();
+			$.when( gallery ).done( (response) => {
 
-			window.Squarespace.AFTER_BODY_LOADED = false;
-			window.Squarespace.afterBodyLoad();
+				modal.injectMeta(response.item);
+				modal.injectGallery(response.item.promotedBlock);
+				modal.open();
+				window.Squarespace.AFTER_BODY_LOADED = false;
+				window.Squarespace.afterBodyLoad();
+
+			});
 		});
 	}
 };

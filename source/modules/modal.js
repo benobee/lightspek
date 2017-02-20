@@ -24,6 +24,11 @@ const modal = {
 		$(close).addClass('close');
 		close.innerText = '✕';
 
+		//loader
+		const loader = document.createElement('div');
+
+		$(loader).addClass('loader-spinner');
+
 		//modal content
 		const contentWrapper = document.createElement('div');
 
@@ -42,6 +47,7 @@ const modal = {
 		//construct
 		
 		container.appendChild(close);
+		container.appendChild(loader);
 		contentWrapper.appendChild(meta);
 		contentWrapper.appendChild(gallery);
 		container.appendChild(contentWrapper);
@@ -51,8 +57,6 @@ const modal = {
 		$('#canvasWrapper').after(container);
 	},
 	injectMeta(data) {
-		console.log(data);
-
 		const title = document.createElement('div');
 
 		$(title).addClass('title');
@@ -95,7 +99,11 @@ const modal = {
 		$('.modal-content-wrapper .image-slide-gallery').html(modalBody);
 
 	},
+	loading() {
+		$(this.activeModal).addClass('is-loading');
+	},
 	open() {
+		$(this.activeModal).removeClass('is-loading');
 		$(this.activeModal).addClass('active');
 	},
 	close() {
